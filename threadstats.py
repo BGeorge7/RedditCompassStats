@@ -38,6 +38,10 @@ class ThreadStats:
         self.libCenterScoreTotal = 0
         self.rightScoreTotal = 0
 
+        self.allLeftCount = 0
+        self.allRightCount = 0
+        self.allCentristCount = 0
+
         self.countedUsers = []
 
 
@@ -107,6 +111,15 @@ class ThreadStats:
         elif (comment.get_ideology() == Ideology.RIGHT): #Right
             self.rightAwardCount += 1
 
+    def left_right_increment(self,comment):
+        if (comment.get_ideology() == Ideology.CENTRIST ): #None
+            self.allCentristCount += 1
+        if (comment.get_ideology() == Ideology.LEFT or comment.get_ideology() == Ideology.LIBLEFT or comment.get_ideology() == Ideology.AUTHLEFT): #Left
+            self.allLeftCount += 1
+        if (comment.get_ideology() == Ideology.AUTHRIGHT or comment.get_ideology() == Ideology.LIBRIGHT or comment.get_ideology() == Ideology.RIGHT ): #None
+            self.allRightCount += 1
+
+
     def count_increment(self, comment, minimumScore = 0, maxScore = 999999, accountSameUserComments = False): #calls other incrementing functions
 
         if(not accountSameUserComments):
@@ -114,13 +127,15 @@ class ThreadStats:
                 self.ideology_score_increment(comment)
                 self.comment_score_increment(comment)
                 self.award_score_increment(comment)
+                self.left_right_increment(comment)
         else:
-            if(comment.get_score() >= minimumScore and comment.get_score() <= maxScore and not ((str(comment.get_authorUserName) not in self.countedUsers) and accountSameUserComments )):
-                print("Got here")
+            if(comment.get_score() >= minimumScore and comment.get_score() <= maxScore and ((comment.get_authorUserName not in self.countedUsers) and accountSameUserComments )):
+                #print("Got here")
                 self.countedUsers.append(comment.get_authorUserName())
                 self.ideology_score_increment(comment)
                 self.comment_score_increment(comment)
                 self.award_score_increment(comment)
+                self.left_right_increment(comment)
 
         
 
@@ -147,6 +162,11 @@ class ThreadStats:
         print(f"Left's: {(self.leftCount / total) * 100:.2f}%")
         print(f"Lib Center's: {(self.libCenterCount / total) * 100:.2f}%")
         print(f"Right's: {(self.rightCount / total) * 100:.2f}%")
+
+        print(f"\nBreak Down By Left and Right")
+        print(f"Right Wing: {(self.allRightCount / total) * 100:.2f}")
+        print(f"Left Wing: {(self.allLeftCount / total) * 100:.2f}")
+        print(f"Centrist Wing: {(self.allCentristCount / total) * 100:.2f}")
 
 
 

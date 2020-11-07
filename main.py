@@ -78,7 +78,7 @@ def main():
     topThreads = []
     stats = ThreadStats()
 
-    for submission in reddit.subreddit("PoliticalCompassMemes").top("week",limit=20):
+    for submission in reddit.subreddit("PoliticalCompassMemes").top("month",limit=2):
         print("Fetching thread.....")
         submission.comments.replace_more(0)
         topThreads.append(populate_thread(submission.comments.list()))
@@ -86,7 +86,7 @@ def main():
     for thread in topThreads:
         print("Compilling Data...")
         for comment in thread:
-            stats.count_increment(comment,accountSameUserComments=True)
+            stats.count_increment(comment, accountSameUserComments=True)
             #print(f"Ideology: {str(comment.get_ideology())}, Score {str(comment.get_score())}, Author Username: {str(comment.get_authorUserName())},\nPermalink: {str(comment.get_permalink())},\nControversiality: {str(comment.get_controversiality())}, Awards: {str(comment.get_totalAwards())}")
             #print("")
 
